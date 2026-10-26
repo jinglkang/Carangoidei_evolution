@@ -70,3 +70,20 @@ show-coords -H -c -l -o -r -T Tanak-Tovatus.delta.filt > Tanak-Tovatus.delta.fil
 
 cat Tanak-Tovatus.delta.filt.coords |  awk '$5>2000' | awk '$3<$4{print $1"\t"$3"\tf\t"$(NF-1)"-"$NF"\n"$2"\t"$4"\tf\t"$(NF-1)"-"$NF}$3>$4{print $1"\t"$3"\tr\t"$(NF-1)"-"$NF"\n"$2"\t"$4"\tr\t"$(NF-1)"-"$NF}'  > Tanak-Tovatus.delta.filt.coords.rf
 ```
+
+**共线性jcvi安装**
+```bash
+# h2076@h2076 Mon Oct 26 2026 16:03:38 ~/sex_change
+sudo apt-get install -y texlive texlive-latex-extra texlive-latex-recommended dvipng cm-super msttcorefonts
+conda create -n jcvi python=3.9
+conda activate jcvi
+conda install pip
+conda install -c conda-forge biopython
+conda install -c conda-forge matplotlib
+conda install -c anaconda scipy
+conda install -c bioconda last
+pip install jcvi
+
+# (jcvi) h2076@h2076 Mon Oct 26 2026 16:03:38 ~/sex_change
+```
+
