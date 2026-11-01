@@ -139,6 +139,7 @@ perl Rename_gff.pl ../GCF_900963305.2_fEcheNa1.2_genomic.fna 24 ../GCF_900963305
 ```
 
 ## Pairwise synteny
+**需要把所有的fasta文件都改为60个核苷酸/行**
 ```bash
 # Trachinotus_anak vs. Trachinotus_ovatus
 # Trachinotus_ovatus vs. Caranx_ignobilis
