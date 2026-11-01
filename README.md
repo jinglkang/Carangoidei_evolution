@@ -543,3 +543,288 @@ braker.pl --softmasking --AUGUSTUS_ab_initio --gff3 \
 --prot_seq=/jinxianstor/home/shichuang001/chentongyu/databases/orthodb/Vertebrata.fa \
 --workingdir ./
 ```
+
+**再增加四个物种:Lates calcarifer (GCF_001640805.2, 有gff), Sphyraena barracuda (GCA_988282095.1), Sphyraena novaehollandiae (GCA_050436865.1), Polydactylus sextarius (GCA_016801845.1)**
+**现在鲹形目所有具有染色体级别基因组的鱼类都已经凑齐**
+
+**Polydactylus sextarius (GCA_016801845.1)**
+```bash
+# (base) shichuang001@login01 Fri Oct 30 2026 17:42:52 ~/jlkang/Carangoidei_evolution
+mkdir extra_genomes
+sbatch braker.sh
+# Submitted batch job 906702
+```
+
+- braker.sh
+```bash
+#!/bin/bash
+#SBATCH -J Polydactylus_sextarius # 指定作业名
+#SBATCH -p base # 指定队列
+#SBATCH -N 1 # 请求节点数
+#SBATCH -n 30 # 请求核心数
+#SBATCH --gres=gpu:0 # 请求gpu数
+#SBATCH -o logs/%j.braker_Polydactylus_sextarius # 标准输出文件
+#SBATCH -e logs/%j.braker_Polydactylus_sextarius # 错误输出文件
+
+braker.pl --softmasking --AUGUSTUS_ab_initio --gff3 \
+--species Polydactylus_sextarius \
+--threads 30 \
+--genome=GCA_016801845.1_ASM1680184v1_genomic.fna \
+--prot_seq=/jinxianstor/home/shichuang001/chentongyu/databases/orthodb/Vertebrata.fa \
+--workingdir ./
+```
+
+**Sphyraena novaehollandiae (GCA_050436865.1)**
+```bash
+# (base) shichuang001@login01 Fri Oct 30 2026 18:05:20 ~/jlkang/Carangoidei_evolution/extra_genomes/GCA_050436865.1
+sbatch braker.sh
+# Submitted batch job 906952
+```
+
+- braker.sh
+```bash
+#!/bin/bash
+#SBATCH -J Sphyraena_novaehollandiae # 指定作业名
+#SBATCH -p base # 指定队列
+#SBATCH -N 1 # 请求节点数
+#SBATCH -n 30 # 请求核心数
+#SBATCH --gres=gpu:0 # 请求gpu数
+#SBATCH -o logs/%j.braker_Sphyraena_novaehollandiae # 标准输出文件
+#SBATCH -e logs/%j.braker_Sphyraena_novaehollandiae # 错误输出文件
+
+braker.pl --softmasking --AUGUSTUS_ab_initio --gff3 \
+--species Sphyraena_novaehollandiae \
+--threads 30 \
+--genome=GCA_050436865.1_fSphNov1.hap2.cur.20230825_genomic.fna \
+--prot_seq=/jinxianstor/home/shichuang001/chentongyu/databases/orthodb/Vertebrata.fa \
+--workingdir ./
+```
+
+**Sphyraena barracuda (GCA_988282095.1)**
+```bash
+# (base) shichuang001@login01 Fri Oct 30 2026 18:08:35 ~/jlkang/Carangoidei_evolution/extra_genomes/GCA_988282095.1
+sbatch braker.sh
+# Submitted batch job 906946
+```
+
+- braker.sh
+```bash
+#!/bin/bash
+#SBATCH -J Sphyraena_barracuda # 指定作业名
+#SBATCH -p base # 指定队列
+#SBATCH -N 1 # 请求节点数
+#SBATCH -n 30 # 请求核心数
+#SBATCH --gres=gpu:0 # 请求gpu数
+#SBATCH -o logs/%j.braker_Sphyraena_barracuda # 标准输出文件
+#SBATCH -e logs/%j.braker_Sphyraena_barracuda # 错误输出文件
+
+braker.pl --softmasking --AUGUSTUS_ab_initio --gff3 \
+--species Sphyraena_barracuda \
+--threads 30 \
+--genome=GCA_988282095.1_Sphyraena_barracuda_haplotype_1_assembly_genomic.fna \
+--prot_seq=/jinxianstor/home/shichuang001/chentongyu/databases/orthodb/Vertebrata.fa \
+--workingdir ./
+```
+
+**重新下载卵形鲳鲹基因组(T2T:GCA_061193975.1_ASM6119397v1)**
+```bash
+# h2076@h2076 Fri Oct 30 2026 20:49:49 ~/Carangoidei_evolution
+nohup wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/061/193/975/GCA_061193975.1_ASM6119397v1/GCA_061193975.1_ASM6119397v1_genomic.fna.gz > GCA_061193975_download.txt 2>&1 &
+# [1] 484994
+
+# (base) shichuang001@login01 Sat Oct 31 2026 10:17:22 ~/jlkang/Carangoidei_evolution/Trachinotus_ovatus_T2T
+sbatch braker.sh
+# Submitted batch job 907438
+```
+
+- braker.sh
+```bash
+#!/bin/bash
+#SBATCH -J Trachinotus_ovatus # 指定作业名
+#SBATCH -p base # 指定队列
+#SBATCH -N 1 # 请求节点数
+#SBATCH -n 30 # 请求核心数
+#SBATCH --gres=gpu:0 # 请求gpu数
+#SBATCH -o logs/%j.braker_Trachinotus_ovatus # 标准输出文件
+#SBATCH -e logs/%j.braker_Trachinotus_ovatus # 错误输出文件
+
+braker.pl --softmasking --AUGUSTUS_ab_initio --gff3 \
+--species Trachinotus_ovatus_T2T \
+--threads 30 \
+--genome=GCA_061193975.1_ASM6119397v1_genomic.fna \
+--prot_seq=/jinxianstor/home/shichuang001/chentongyu/databases/orthodb/Vertebrata.fa \
+--workingdir ./
+```
+
+## braker注释的名字是把fasta的header全部连接到一起了，重新改一下
+```bash
+# (base) shichuang001@login01 Sun Nov 01 2026 12:50:00 ~/jlkang/Carangoidei_evolution
+mkdir rename
+
+# Remorina_albescens: 23 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 11:37:05 ~/jlkang/Carangoidei_evolution/Remorina_albescens
+falen Remorina_albescens.fasta|sort -k2,2nr
+Rename.pl Remorina_albescens.fasta 23 > ../rename/Remorina_albescens.fasta
+Rename_gff_braker.pl Remorina_albescens.fasta 23 Remorina_albescens.gff3 > ../rename/Remorina_albescens.gff3
+
+# Xiphias_gladius: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 14:42:15 ~/jlkang/Carangoidei_evolution/Taget_annotated_genomes/ncbi_dataset/data/GCF_016859285.1
+Rename.pl Xiphias_gladius.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Xiphias_gladius.fasta
+Rename_gff.pl Xiphias_gladius.fasta 24 Xiphias_gladius.gff3 > ~/jlkang/Carangoidei_evolution/rename/Xiphias_gladius.gff3
+
+# Toxotes_jaculatrix: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:26:32 ~/jlkang/Carangoidei_evolution/Taget_annotated_genomes/ncbi_dataset/data/GCF_017976425.1
+Rename.pl Toxotes_jaculatrix.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Toxotes_jaculatrix.fasta
+Rename_gff.pl Toxotes_jaculatrix.fasta 24 Toxotes_jaculatrix.gff3 > ~/jlkang/Carangoidei_evolution/rename/Toxotes_jaculatrix.gff3
+
+# Trachurus_japonicus: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:29:26 ~/jlkang/Carangoidei_evolution/Taget_annotated_genomes/ncbi_dataset/data/GCF_045865225.1
+Rename.pl Trachurus_japonicus.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Trachurus_japonicus.fasta
+Rename_gff.pl Trachurus_japonicus.fasta 24 Trachurus_japonicus.gff3 > ~/jlkang/Carangoidei_evolution/rename/Trachurus_japonicus.gff3
+
+# Trachurus_trachurus: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:36:04 ~/jlkang/Carangoidei_evolution/Taget_annotated_genomes/ncbi_dataset/data/GCF_905171665.1
+Rename.pl Trachurus_trachurus.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Trachurus_trachurus.fasta
+Rename_gff.pl Trachurus_trachurus.fasta 24 Trachurus_trachurus.gff3 > ~/jlkang/Carangoidei_evolution/rename/Trachurus_trachurus.gff3
+```
+
+**braker注释**
+```bash
+# Decapterus_maruadsi: 23 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:43:26 ~/jlkang/Carangoidei_evolution/Taget_noannotated_genomes/ncbi_dataset/data/GCA_030347415.2
+Rename.pl Decapterus_maruadsi.fasta 23 > ~/jlkang/Carangoidei_evolution/rename/Decapterus_maruadsi.fasta
+Rename_gff_braker.pl Decapterus_maruadsi.fasta 23 Decapterus_maruadsi.gff3 > ~/jlkang/Carangoidei_evolution/rename/Decapterus_maruadsi.gff3
+
+# Caranx_heberi: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:49:49 ~/jlkang/Carangoidei_evolution/Taget_noannotated_genomes/ncbi_dataset/data/GCA_054643105.1
+Rename.pl Caranx_heberi.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Caranx_heberi.fasta
+Rename_gff_braker.pl Caranx_heberi.fasta 24 Caranx_heberi.gff3 > ~/jlkang/Carangoidei_evolution/rename/Caranx_heberi.gff3
+
+# Caranx_crysos: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:53:03 ~/jlkang/Carangoidei_evolution/Taget_noannotated_genomes/ncbi_dataset/data/GCA_984588375.1
+Rename.pl Caranx_crysos.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Caranx_crysos.fasta
+Rename_gff_braker.pl Caranx_crysos.fasta 24 Caranx_crysos.gff3 > ~/jlkang/Carangoidei_evolution/rename/Caranx_crysos.gff3
+
+# Trachinotus_ovatus_T2T: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:56:28 ~/jlkang/Carangoidei_evolution/Trachinotus_ovatus_T2T
+Rename.pl GCA_061193975.1_ASM6119397v1_genomic.fna 24 > ~/jlkang/Carangoidei_evolution/rename/Trachinotus_ovatus.fasta
+Rename_gff_braker.pl GCA_061193975.1_ASM6119397v1_genomic.fna 24 braker.gff3 > ~/jlkang/Carangoidei_evolution/rename/Trachinotus_ovatus.gff3
+
+# Polydactylus sextarius: 26 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 17:58:54 ~/jlkang/Carangoidei_evolution/extra_genomes/GCA_016801845.1
+Rename.pl GCA_016801845.1_ASM1680184v1_genomic.fna 26 > ~/jlkang/Carangoidei_evolution/rename/Polydactylus_sextarius.fasta
+Rename_gff_braker.pl GCA_016801845.1_ASM1680184v1_genomic.fna 26 braker.gff3 > ~/jlkang/Carangoidei_evolution/rename/Polydactylus_sextarius.gff3
+
+# Sphyraena novaehollandiae: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 18:11:50 ~/jlkang/Carangoidei_evolution/extra_genomes/GCA_050436865.1
+Rename.pl GCA_050436865.1_fSphNov1.hap2.cur.20230825_genomic.fna 24 > ~/jlkang/Carangoidei_evolution/rename/Sphyraena_novaehollandiae.fasta
+Rename_gff_braker.pl GCA_050436865.1_fSphNov1.hap2.cur.20230825_genomic.fna 24 braker.gff3 > ~/jlkang/Carangoidei_evolution/rename/Sphyraena_novaehollandiae.gff3
+
+# Sphyraena barracuda: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 18:13:16 ~/jlkang/Carangoidei_evolution/extra_genomes/GCA_988282095.1
+Rename.pl GCA_988282095.1_Sphyraena_barracuda_haplotype_1_assembly_genomic.fna 24 > ~/jlkang/Carangoidei_evolution/rename/Sphyraena_barracuda.fasta
+Rename_gff_braker.pl GCA_988282095.1_Sphyraena_barracuda_haplotype_1_assembly_genomic.fna 24 braker.gff3 > ~/jlkang/Carangoidei_evolution/rename/Sphyraena_barracuda.gff3
+
+# Lates_calcarifer: 24 chromosomes
+# (base) shichuang001@login01 Sun Nov 01 2026 18:15:50 ~/jlkang/Carangoidei_evolution/extra_genomes/GCF_001640805.2
+Rename.pl Lates_calcarifer.fasta 24 > ~/jlkang/Carangoidei_evolution/rename/Lates_calcarifer.fasta
+Rename_gff.pl Lates_calcarifer.fasta 24 Lates_calcarifer.gff3 > ~/jlkang/Carangoidei_evolution/rename/Lates_calcarifer.gff3
+```
+
+**自己测序的基因组**
+```bash
+# Alectis_indicus: 24 chromosomes, header里面多了"AI_"
+# (base) shichuang001@login01 Sun Nov 01 2026 19:04:57 ~/jlkang/Carangoidei_evolution
+Rename.pl Alectis_indicus.Genome.V1.genome.fasta 24 > rename/Alectis_indicus.fasta
+./Rename_gff.pl Alectis_indicus.Genome.V1.genome.fasta 24 Alectis_indicus.Genome.V1.gff3 > rename/Alectis_indicus.gff3
+
+# Alepes_djedaba: 26 chromosomes
+cp Alepes_djedaba_assembly_final.fasta rename/Alepes_djedaba.fasta
+cp Alepes_djedaba.Genome.V1.gff3 rename/Alepes_djedaba.gff3
+
+# Caranx_equula: 24 chromosomes
+Rename.pl Caranx_equula_assembly_final.fasta 24 > rename/Caranx_equula.fasta
+Rename_gff.pl Caranx_equula_assembly_final.fasta 24 Caranx_equula.Genome.V1.gff3 > rename/Caranx_equula.gff3
+
+# Caranx_ignobilis: 24 chromosomes
+cp Caranx_ignobilis.Genome.fasta rename/Caranx_ignobilis.fasta
+cp Caranx_ignobilis.Genome.V1.gff3 rename/Caranx_ignobilis.gff3
+
+# Caranx_melampygus: 不是chromosome level
+
+# Caranx_sexfasciatus: 24 chromosomes
+Rename.pl Caranx_sexfasciatus.Genome.fasta 24 > rename/Caranx_sexfasciatus.fasta
+Rename_gff.pl Caranx_sexfasciatus.Genome.fasta 24 Caranx_sexfasciatus.Genome.V1.gff3 > rename/Caranx_sexfasciatus.gff3
+
+# Decapterus_macrosoma: 23 chromosomes
+cp Decapterus_macrosoma_assembly_final.fasta rename/Decapterus_macrosoma.fasta
+cp Decapterus_macrosoma.Genome.V1.gff3 rename/Decapterus_macrosoma.gff3
+
+# Echeneis_naucrates: 24 chromosomes
+Rename.pl Echeneis_naucrates.fasta 24 > rename/Echeneis_naucrates.fasta
+Rename_gff.pl Echeneis_naucrates.fasta 24 Echeneis_naucrates.gff3 > rename/Echeneis_naucrates.gff3
+
+# Elagatis_bipinnulata: 24 chromosomes
+cp Elagatis_bipinnulata_assembly_final.fasta rename/Elagatis_bipinnulata.fasta
+cp Elagatis_bipinnulata.Genome.V1.gff3 rename/Elagatis_bipinnulata.gff3
+
+# Megalaspis_cordyla: 24 chromosomes
+Rename.pl Megalaspis_cordyla_assembly_final.fasta 24 > rename/Megalaspis_cordyla.fasta
+Rename_gff.pl Megalaspis_cordyla_assembly_final.fasta 24 Megalaspis_cordyla.Genome.V1.gff3 > rename/Megalaspis_cordyla.gff3
+
+# Parastromateus_niger: 24 chromosomes
+Rename.pl Parastromateus_niger.Genome.fasta 24 > rename/Parastromateus_niger.fasta
+Rename_gff.pl Parastromateus_niger.Genome.fasta 24 Parastromateus_niger.Genome.V1.gff3 > rename/Parastromateus_niger.gff3
+
+# Scomberoides_lysan: 24 chromosomes
+Rename.pl Scomberoides_lysan.Genome.fasta 24 > rename/Scomberoides_lysan.fasta
+Rename_gff.pl Scomberoides_lysan.Genome.fasta 24 Scomberoides_lysan.Genome.V1.gff3 > rename/Scomberoides_lysan.gff3
+
+# Selaroides_leptolepis: 30 chromosomes
+cp Selaroides_leptolepis_assembly_final.fasta rename/Selaroides_leptolepis.fasta
+cp Selaroides_leptolepis.Genome.V1.gff3 rename/Selaroides_leptolepis.gff3
+
+# Trachinotus_anak: T2T, 24 chromosomes
+Rename.pl Trachinotus_anak_GCA_977005145.1.fasta 24 > rename/Trachinotus_anak.fasta
+Rename_gff.pl Trachinotus_anak_GCA_977005145.1.fasta 24 Trachinotus_anak_GCA_977005145.1.gff3 > rename/Trachinotus_anak.gff3
+
+# Trachinotus_blochii: 24 chromosomes
+Rename.pl Trachinotus_blochii_our.fasta 24 > rename/Trachinotus_blochii.fasta
+Rename_gff.pl Trachinotus_blochii_our.fasta 24 Trachinotus_blochii_our.gff3 > rename/Trachinotus_blochii.gff3
+
+# Trachinotus_carolinus: 24 chromosomes
+Rename.pl Trachinotus_carolinus_GCA_040938265.1_ragtag.fasta 24 > rename/Trachinotus_carolinus.fasta
+Rename_gff.pl Trachinotus_carolinus_GCA_040938265.1_ragtag.fasta 24 Trachinotus_carolinus_GCA_040938265.1_ragtag.gff3 > rename/Trachinotus_carolinus.gff3
+```
+**总共28个鲹形目物种（均有染色体级别基因组）**
+We set two fossil calibrations: O. latipes–T. nigroviridis (~96.9–150.9 Ma), D. rerio–G. aculeatus (~149.85–165.2 Ma) and a time for the root (< 700 Ma)
+选用四个物种：
+Japanese Medaka, Oryzias latipes (GCF_053564925.1);
+Fugu, Takifugu rubripes (GCF_901000725.3);
+Zebrafish, Danio rerio (GCF_052040795.2);
+Stickleback, Gasterosteus aculeatus (GCF_964276395.1) 为outgroup
+```bash
+# Zebrafish, Danio rerio (GCF_052040795.2)
+# (base) shichuang001@login01 Sun Nov 01 2026 22:42:37 ~/jlkang/genome_and_gff/others/GCF_052040795.2
+cp GCF_052040795.2_GRCz13ab_genomic.fna GCF_052040795.2_GRCz13ab_genomic.gff ~/jlkang/Carangoidei_evolution/
+# (base) shichuang001@login01 Sun Nov 01 2026 22:43:52 ~/jlkang/Carangoidei_evolution
+cp GCF_052040795.2_GRCz13ab_genomic.fna rename/Danio_rerio.fasta
+cp GCF_052040795.2_GRCz13ab_genomic.gff rename/Danio_rerio.gff3
+
+# Stickleback, Gasterosteus aculeatus (GCF_964276395.1)
+# (base) shichuang001@login01 Sun Nov 01 2026 22:28:13 ~/jlkang/genome_and_gff/others/GCF_053564925.1
+cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.fna GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.gff ~/jlkang/Carangoidei_evolution/
+# (base) shichuang001@login01 Sun Nov 01 2026 22:50:34 ~/jlkang/Carangoidei_evolution
+cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.fna rename/Gasterosteus_aculeatus.fasta
+cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.gff rename/Gasterosteus_aculeatus.gff3
+
+# Fugu, Takifugu rubripes (GCF_901000725.3)
+# (base) shichuang001@login01 Sun Nov 01 2026 22:53:44 ~/jlkang/genome_and_gff/others/GCF_901000725.3
+cp GCF_901000725.3_fTakRub1.3_genomic.fna ~/jlkang/Carangoidei_evolution/rename/Takifugu_rubripes.fasta
+cp GCF_901000725.3_fTakRub1.3_genomic.gff ~/jlkang/Carangoidei_evolution/rename/Takifugu_rubripes.gff3
+
+# Japanese Medaka, Oryzias latipes (GCF_053564925.1)
+# (base) shichuang001@login01 Sun Nov 01 2026 22:58:44 ~/jlkang/genome_and_gff/others/GCF_053564925.1
+cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.fna ~/jlkang/Carangoidei_evolution/rename/Oryzias_latipes.fasta
+cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.gff ~/jlkang/Carangoidei_evolution/rename/Oryzias_latipes.gff3
+```
