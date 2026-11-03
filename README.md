@@ -804,6 +804,8 @@ Japanese Medaka, Oryzias latipes (GCF_053564925.1);
 Fugu, Takifugu rubripes (GCF_901000725.3);
 Zebrafish, Danio rerio (GCF_052040795.2);
 Stickleback, Gasterosteus aculeatus (GCF_964276395.1) 为outgroup
+
+**Danio rerio**
 ```bash
 # Zebrafish, Danio rerio (GCF_052040795.2)
 # (base) shichuang001@login01 Sun Nov 01 2026 22:42:37 ~/jlkang/genome_and_gff/others/GCF_052040795.2
@@ -811,14 +813,28 @@ cp GCF_052040795.2_GRCz13ab_genomic.fna GCF_052040795.2_GRCz13ab_genomic.gff ~/j
 # (base) shichuang001@login01 Sun Nov 01 2026 22:43:52 ~/jlkang/Carangoidei_evolution
 cp GCF_052040795.2_GRCz13ab_genomic.fna rename/Danio_rerio.fasta
 cp GCF_052040795.2_GRCz13ab_genomic.gff rename/Danio_rerio.gff3
+```
 
+**三刺鱼Stickleback**
+🔴 **Error:三刺鱼基因组序列和gff3拷贝出错了**
+```bash
 # Stickleback, Gasterosteus aculeatus (GCF_964276395.1)
 # (base) shichuang001@login01 Sun Nov 01 2026 22:28:13 ~/jlkang/genome_and_gff/others/GCF_053564925.1
 cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.fna GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.gff ~/jlkang/Carangoidei_evolution/
 # (base) shichuang001@login01 Sun Nov 01 2026 22:50:34 ~/jlkang/Carangoidei_evolution
 cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.fna rename/Gasterosteus_aculeatus.fasta
 cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.gff rename/Gasterosteus_aculeatus.gff3
+```
+🟢 **重新拷贝三刺鱼的基因组序列和gff3:**
+```bash
+# (base) shichuang001@login01 Tue Nov 03 2026 21:52:59 ~/jlkang/genome_and_gff/others/GCF_964276395.1
+cp GCF_964276395.1_fGasAcu3.hap1.1_genomic.fna GCF_964276395.1_fGasAcu3.hap1.1_genomic.gff ~/jlkang/Carangoidei_evolution/
+cp GCF_964276395.1_fGasAcu3.hap1.1_genomic.fna rename/Gasterosteus_aculeatus.fasta
+cp GCF_964276395.1_fGasAcu3.hap1.1_genomic.gff rename/Gasterosteus_aculeatus.gff3
+```
 
+**Fugu(Takifugu rubripes)和Japanese Medaka(Oryzias latipes)**
+```bash
 # Fugu, Takifugu rubripes (GCF_901000725.3)
 # (base) shichuang001@login01 Sun Nov 01 2026 22:53:44 ~/jlkang/genome_and_gff/others/GCF_901000725.3
 cp GCF_901000725.3_fTakRub1.3_genomic.fna ~/jlkang/Carangoidei_evolution/rename/Takifugu_rubripes.fasta
