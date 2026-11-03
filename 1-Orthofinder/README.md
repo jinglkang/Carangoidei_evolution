@@ -142,10 +142,16 @@ perl Conca_seq.pl > ../../Phylogeny/Single_copy_conca.fa
 # 共2,071,585个蛋白
 
 # 4. Single_copy_conca.fa，用iqtree进行构树
+# 以Oryzias_latipes,Takifugu_rubripes,Danio_rerio,Gasterosteus_aculeatus为外类群
 # iqtree -s Single_copy_conca.fa -o Oryzias_latipes,Takifugu_rubripes,Danio_rerio,Gasterosteus_aculeatus --seqtype AA -T 32 -B 1000 -m MFP
 # (base) shichuang001@login01 Mon Nov 02 2026 17:00:50 ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2/Revise/OrthoFinder/Results_Nov02/Phylogeny
 sbatch iqtree.sh
 # Submitted batch job 909539
+
+# 以Danio_rerio为外类群
+# iqtree3 -s Single_copy_conca.fa -o Danio_rerio -st AA -m MFP -B 1000 -T 50 -pre Carangoidei_28sp
+sbatch iqtree2.sh
+# Submitted batch job 909610
 ``` 
 
 - rename_single_copy_fa.pl
@@ -291,3 +297,17 @@ foreach my $spe (@spes) {
 iqtree -s Single_copy_conca.fa -o Oryzias_latipes,Takifugu_rubripes,Danio_rerio,Gasterosteus_aculeatus --seqtype AA -T 32 -B 1000 -m MFP
 ```
 
+- iqtree2.sh
+```bash
+#!/bin/bash
+#SBATCH -J iqtree # 指定作业名
+#SBATCH -p base # 指定队列
+#SBATCH -N 1 # 请求节点数
+#SBATCH -n 50 # 请求核心数
+#SBATCH --gres=gpu:0 # 请求gpu数
+#SBATCH -o logs/%j.iqtree # 标准输出文件
+#SBATCH -e logs/%j.iqtree # 错误输出文件
+#SBATCH --mail-user=jinglkang@outlook.com
+
+iqtree3 -s Single_copy_conca.fa -o Danio_rerio -st AA -m MFP -B 1000 -T 50 -pre Carangoidei_28sp
+```
