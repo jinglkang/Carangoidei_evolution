@@ -845,3 +845,107 @@ cp GCF_901000725.3_fTakRub1.3_genomic.gff ~/jlkang/Carangoidei_evolution/rename/
 cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.fna ~/jlkang/Carangoidei_evolution/rename/Oryzias_latipes.fasta
 cp GCF_053564925.1_Olatipes_Hd-rR_3.1_genomic.gff ~/jlkang/Carangoidei_evolution/rename/Oryzias_latipes.gff3
 ```
+
+## **发现错误，三刺鱼怎么会和日本青鳉聚在一块，而且没有任何枝长，检查发现之前的拷贝出错了，全部需要重新做**
+### 针对于三刺鱼Gasterosteus_aculeatus
+```bash
+# 1. obtain the longest pep gff3 for each species
+# (agat) shichuang001@login01 Tue Nov 03 2026 22:00:23 ~/jlkang/Carangoidei_evolution/rename
+agat_sp_keep_longest_isoform.pl --gff Gasterosteus_aculeatus.gff3 -o longest_gff/Gasterosteus_aculeatus.longest.gff3
+
+# 2. obtain the sequences of nuc and pep
+gffread -g Gasterosteus_aculeatus.fasta -x longest_nuc/Gasterosteus_aculeatus.cds -y longest_pep/Gasterosteus_aculeatus.pep longest_gff/Gasterosteus_aculeatus.longest.gff3
+
+# Gasterosteus_aculeatus没有疑似核苷酸的序列
+# (base) shichuang001@login01 Tue Nov 03 2026 22:19:38 ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2
+cp ../Gasterosteus_aculeatus.pep Gasterosteus_aculeatus.fas
+
+# 把序列中的"."去掉
+# (base) shichuang001@login01 Tue Nov 03 2026 22:22:33 ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2
+perl temp1.pl
+
+# 统计数量
+# (base) shichuang001@login01 Tue Nov 03 2026 22:26:36 ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2/Revise
+for f in *.fas; do count=$(grep -c '^>' "$f");printf "%-40s %d\n" "$f" "$count";done
+```
+### 把所有序列的header都加上物种的名称
+**每个header: species|$_**
+```bash
+# (base) shichuang001@login01 Tue Nov 03 2026 22:56:46 ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2/Revise
+perl temp1.pl
+```
+- temp1.pl
+```perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Parallel::ForkManager;
+
+my @fas=<*fas>;
+foreach my $fa (@fas) {
+	(my $spe)=$fa=~/(.*?)\.fas/;
+	my $new=$fa.".1";
+	open NEW, ">$new" or die "can not open $new\n";
+	open FA, $fa or die "can not open $fa\n";
+	while (<FA>) {
+		chomp;
+		if (/^>/) {
+			s/>//;
+			my $header=$spe."|".$_;
+			print NEW ">$header\n";
+		} else {
+			print NEW "$_\n";
+		}
+	}
+	system("mv $new $fa");
+}
+```
+
+```bash
+# 把所有的nuc和pep序列都放到~/jlkang/Carangoidei_evolution/Revise里面
+# (base) shichuang001@login01 Tue Nov 03 2026 22:58:48 ~/jlkang/Carangoidei_evolution
+mkdir Revise; cd Revise
+# (base) shichuang001@login01 Tue Nov 03 2026 23:00:14 ~/jlkang/Carangoidei_evolution/Revise
+mkdir longest_nuc; mkdir longest_pep; cd longest_pep
+
+# (base) shichuang001@login01 Tue Nov 03 2026 23:01:34 ~/jlkang/Carangoidei_evolution/Revise/longest_pep
+cp ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2/Revise/*.fas ./
+cp ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2/Revise/orthofinder.job ./
+cp ~/jlkang/Carangoidei_evolution/rename/longest_pep/longest_pep_2/Revise/temp1.pl ./
+
+# (base) shichuang001@login01 Tue Nov 03 2026 23:04:04 ~/jlkang/Carangoidei_evolution/Revise/longest_nuc
+cp ~/jlkang/Carangoidei_evolution/rename/longest_nuc/*.cds ./
+perl temp1.pl
+
+# run Orthofinder
+# (orthofinder_env) shichuang001@login01 Tue Nov 03 2026 23:19:34 ~/jlkang/Carangoidei_evolution/Revise/longest_pep
+sbatch orthofinder.job
+# Submitted batch job 909914
+```
+
+- temp1.pl
+```perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Parallel::ForkManager;
+
+my @fas=<*cds>;
+foreach my $fa (@fas) {
+	(my $spe)=$fa=~/(.*?)\.cds/;
+	my $new=$spe.".fas";
+	open NEW, ">$new" or die "can not open $new\n";
+	open FA, $fa or die "can not open $fa\n";
+	while (<FA>) {
+		chomp;
+		if (/^>/) {
+			s/>//;
+			my $header=$spe."|".$_;
+			print NEW ">$header\n";
+		} else {
+			print NEW "$_\n";
+		}
+	}
+	system("rm $fa");
+}
+```
