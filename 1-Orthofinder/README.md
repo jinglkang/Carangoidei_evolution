@@ -220,8 +220,7 @@ foreach my $cmd (@cmds) {
         system($cmd);
         $manager->finish;
 }
-$manager -> wait_all_children;print ">$spe\n$seq{$spe}\n";
-}
+$manager -> wait_all_children;
 ```
 
 - Align_trim.sh
@@ -310,4 +309,62 @@ iqtree -s Single_copy_conca.fa -o Oryzias_latipes,Takifugu_rubripes,Danio_rerio,
 #SBATCH --mail-user=jinglkang@outlook.com
 
 iqtree3 -s Single_copy_conca.fa -o Danio_rerio -st AA -m MFP -B 1000 -T 50 -pre Carangoidei_28sp
+```
+
+# 重新跑Orthofinder
+```bash
+# (base) shichuang001@login01 Wed Nov 04 2026 05:18:01 ~/jlkang/Carangoidei_evolution/Revise/longest_pep/OrthoFinder/Results_Nov03/Single_Copy_Orthologue_Sequences
+ll *.fa|wc -l # 共3472个单拷贝同源基因
+mkdir muscle; mkdir trimal
+sbatch Align_trim.sh
+# (base) shichuang001@login01 Wed Nov 04 2026 05:32:24 ~/jlkang/Carangoidei_evolution/Revise/longest_pep/OrthoFinder/Results_Nov03/Single_Copy_Orthologue_Sequences/trimal
+perl Conca_seq.pl > ../../Phylogeny/Single_copy_conca.fa
+# 共1,989,887个AA
+# (base) shichuang001@login01 Wed Nov 04 2026 05:51:05 ~/jlkang/Carangoidei_evolution/Revise/longest_pep/OrthoFinder/Results_Nov03/Phylogeny
+sbatch iqtree2.sh
+# Submitted batch job 909917
+```
+
+- Conca_seq.pl
+```perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Parallel::ForkManager;
+
+my (%hash, %hash1); my @spes;
+my @fas=<*fa.trimal>;
+foreach my $fa (@fas) {
+    my (%hash2); my $spe;
+    open FA, $fa or die "can not open $fa\n";
+    while (<FA>) {
+        chomp;
+        if (/^>/) {
+            s/>//;
+            ($spe)=$_=~/(.*?)\|.*/;
+            $hash1{$spe}++;
+            push @spes, $spe if $hash1{$spe}==1;
+        } else {
+            $hash2{$spe}.=$_;
+            }
+    }
+
+    my $len=length($hash2{$spe});
+    if ($len >= 50) {
+        open FA, $fa or die "can not open $fa\n";
+        while (<FA>) {
+            chomp;
+            if (/^>/) {
+                s/>//;
+                ($spe)=$_=~/(.*?)\|.*/;
+            } else {
+                $hash{$spe}.=$_;
+            }
+        }
+    }
+}
+
+foreach my $spe (@spes) {
+    print ">$spe\n$hash{$spe}\n";
+}
 ```
