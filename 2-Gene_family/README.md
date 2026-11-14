@@ -32,6 +32,48 @@ echo "end;">>Significant_trees.tre
 
 # 2. 基于Base_count.tab, Significant_trees.tre, Base_change.tab三个文件整合信息
 perl extract_sig_fm.pl > Sig_family.txt
+
+# 3. 再调整一下格式
+# (base) kangjingliang@KangdeMBP-2 二 11 10 2026 11:44:04 ~/Documents/2026/鲳鲹进化/Gene_family
+perl transform_sig.pl Sig_family.txt > Sig_family_transform.txt
+```
+
+- **transform_sig.pl**
+```perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $sig=$ARGV[0];
+my @headers;
+open SIG, $sig or die "can not open $sig\n";
+while (<SIG>) {
+	chomp;
+	my @a=split;
+	if (/^FamilyID/) {
+		@headers=@a;
+		my $info="FamilyID\t";
+		for (my $i = 1; $i < @a; $i++) {
+			$info.=$a[$i]."\tChange\tSIG\t";			
+		}
+		$info=~s/\s+$//;
+		print "$info\n";
+	} else {
+		my ($nb, $change, $sig, $info);
+		$info="$a[0]\t";
+		for (my $i = 1; $i < @a; $i++) {
+			if ($a[$i]=~/sig/) {
+				($nb, $change, $sig)=$a[$i]=~/(\d+?)\((.*?)\;(.*?)\)/;
+			} else {
+				($nb, $change)=$a[$i]=~/(\d+?)\((.*?)\)/;
+				$sig="Notsig";
+			}
+			$info.="$nb\t$change\t$sig\t";
+		}
+		$info=~s/\s+$//;
+		print "$info\n";
+	}
+}
 ```
 
 - **extract_sig_fm.pl**
@@ -316,7 +358,7 @@ sbatch run_emapper.sh
 
 # 4.1 提取出每个基因的GO和KEGG注释，结果文件为Orthogroups_GOs.txt和Orthogroups_KEGG_pathways.txt
 # (base) shichuang001@login01 Mon Nov 09 2026 22:25:18 ~/jlkang/Carangoidei_evolution/Revise/longest_pep/OrthoFinder/Results_Nov03/Orthogroups
-perl Extract_GOs_KEGGs_orthogroups.pl
+perl Extract_GOs_KEGGs_orthogroups.pl ../Annotation/fish_eggnog.emapper.annotations
 
 # 4.2 下载GO_id和GO_name信息
 # (base) kangjingliang@KangdeMBP-2 一 11 09 2026 23:35:15 ~/Documents/2026/鲳鲹进化/Gene_family
@@ -699,7 +741,7 @@ use Getopt::Long;
 use Parallel::ForkManager;
 
 my (%GO, %KEGG);
-my $egg="../Annotation/fish_eggnog.emapper.annotations";
+my $egg=$ARGV[0];
 open EGG, $egg or die "can not open $egg\n";
 while (<EGG>) {
 	chomp;
@@ -1282,7 +1324,7 @@ perl anno.pl filtered_families_Caranginae_no.tsv > filtered_families_Caranginae_
 # Type1: 高扁平组(26); 非高扁平组(23,24,27)
 perl filter_cafe_contrast_groups.pl -i Base_count.tab -a 58 -f 26 -n 23,24,27 -o Toxotes
 perl anno.pl Toxotes.flat_contracted_nonflat_expanded.tsv > Toxotes.flat_contracted_nonflat_expanded_anno.tsv # 1个
-perl anno.pl Toxotes.flat_expanded_nonflat_contracted.tsv > Toxotes.flat_expanded_nonflat_contracted_anno.tsv # 23个
+perl anno.pl Toxotes.flat_expanded_nonflat_contracted.tsv > Toxotes.flat_expanded_nonflat_contracted_anno.tsv # 22个
 
 # Type2: 高扁平组(1,2,3,4); 非高扁平组(6,7)
 perl filter_cafe_contrast_groups.pl -i Base_count.tab -a 38 -f 1,2,3,4 -n 6,7 -o Trachinotus
@@ -1293,6 +1335,34 @@ perl anno.pl Trachinotus.flat_contracted_nonflat_expanded.tsv > Trachinotus.flat
 perl filter_cafe_contrast_groups.pl -i Base_count.tab -a 44 -f 15,16,17,18,19,21 -n 8,9,10,11,12,22 -o Caranginae # 没有找到
 ```
 
+- **anno.pl**
+```perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Parallel::ForkManager;
+
+my %hash;
+my $anno="/jinxianstor/home/shichuang001/jlkang/Carangoidei_evolution/Revise/longest_pep/OrthoFinder/Results_Nov03/Annotation/Orthogroup_representative_gene.txt";
+open ANNO, $anno or die "can not open $anno\n";
+while (<ANNO>) {
+        chomp;
+        my @a=split /\t/;
+        $hash{$a[0]}=$a[1]."\t".$a[-1];
+}
+
+my $targ=$ARGV[0];
+open TARG, $targ or die "can not open $targ\n";
+while (<TARG>) {
+        chomp;
+        my @a=split;
+        if (/^FamilyID/) {
+                print "$_\tGeneName\tGeneDescription\n";
+        } else {
+                print "$_\t$hash{$a[0]}\n";
+        }
+}
+```
 
 - **filter_gene_families.pl**
 ```perl
@@ -1304,7 +1374,8 @@ use warnings;
 # Filter gene families based on two groups of CAFE copy numbers
 #
 # Group A: all selected nodes must have copy number == 0
-# Group B: at least 75% of selected nodes must have copy number > 0
+# Group B: all species must have if have species less than four
+# Group B: at least four species if have species more than four
 #
 # Input:  CAFE family count matrix (tab-delimited)
 # Output: FamilyID + selected Group A and Group B columns
@@ -1355,11 +1426,11 @@ for my $node (@group_b) {
         if $group_a_hash{$node};
 }
 
-# if Group B species have more than two species, only absent for once
-# if Group B species have less two species, no absent allow 
+# if Group B species have more than three species, at least four species
+# if Group B species have less three species, no absent allow 
 my $min_present;
 if (@group_b > 3) {
-	$min_present = @group_b - 1;
+	$min_present = 4;
 } else {
 	 $min_present = @group_b;
 }
